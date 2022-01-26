@@ -74,6 +74,7 @@ Thumbs.db
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+Properties/
 x64/
 x86/
 build/
