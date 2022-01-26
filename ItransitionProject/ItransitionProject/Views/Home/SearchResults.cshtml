@@ -1,0 +1,86 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model SearchViewModel
+@inject IViewLocalizer Localizer
+@{
+	ViewData["Title"] = "Search";
+}
+
+<div class="container">
+	@if (Model.UserItems.Count > 0)
+	{
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h4 class="text-right">@Localizer["ItemsLabel"]</h4>
+		</div>
+	}
+
+	<div class="row">
+		@foreach (var item in Model.UserItems)
+		{
+			<div class="col-sm-2">
+				<div class="card h-100">
+					<div class="card-body">
+						<h5 class="card-title">@item.Name</h5>
+						<a href="@Url.Action("ItemPage", "Collection", new { itemId = item.Id })" class="btn btn-primary">@Localizer["ViewLabel"]</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+	@if (Model.ItemProperties.Count > 0)
+	{
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h4 class="text-right">@Localizer["PropetriesLabel"]</h4>
+	</div>
+	}
+	<div class="row">
+		@foreach (var item in Model.ItemProperties)
+		{
+			<div class="col-sm-2">
+				<div class="card h-100">
+					<div class="card-body">
+						<h5 class="card-title">@item.Item.Name</h5>
+						<a href="@Url.Action("ItemPage", "Collection", new { itemId = item.Item.Id })" class="btn btn-primary">@Localizer["ViewLabel"]</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+	@if (Model.Comments.Count > 0)
+	{
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h4 class="text-right">@Localizer["CommentsLabel"]</h4>
+	</div>
+	}
+	<div class="row">
+		@foreach (var item in Model.Comments)
+		{
+			<div class="col-sm-2">
+				<div class="card h-100">
+					<div class="card-body">
+						<h5 class="card-title">@item.UserItem.Name</h5>
+						<a href="@Url.Action("ItemPage", "Collection", new { itemId = item.ItemId })" class="btn btn-primary">@Localizer["ViewLabel"]</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+	@if (Model.Tags.Count > 0)
+	{
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h4 class="text-right">@Localizer["TagsLabel"]</h4>
+	</div>
+	}
+	<div class="row">
+		@foreach (var item in Model.Tags)
+		{
+			<div class="col-sm-2">
+				<div class="card h-100">
+					<div class="card-body">
+						<h5 class="card-title">@item.UserItem.Name</h5>
+						<a href="@Url.Action("ItemPage", "Collection", new { itemId = item.ItemId })" class="btn btn-primary">@Localizer["ViewLabel"]</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

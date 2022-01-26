@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model IEnumerable<ItransitionProject.Models.UsersViewModel>
+@inject IViewLocalizer Localizer
+@{
+	ViewData["Title"] = "Users";
+	int i = 0;
+}
+
+<div class="container">
+	<form method="post">
+		<div class="row">
+			<div class="btn-group col-sm mb-3" role="group" aria-label="Basic example" align="center">
+				@if (User.IsInRole("admin"))
+				{
+					<button type="submit" asp-controller="Administration" asp-action="Delete" class="btn btn-primary">@Localizer["DeleteLabel"]</button>
+					<button type="submit" asp-controller="Administration" asp-action="BlockUser" class="btn btn-primary">@Localizer["BlockLabel"]</button>
+					<button type="submit" asp-controller="Administration" asp-action="UnblockUser" class="btn btn-primary">@Localizer["UnblockLabel"]</button>
+					<button type="submit" asp-controller="Administration" asp-action="UpgradeToAdmin" class="btn btn-primary">@Localizer["UpgradeLabel"]</button>
+					<button type="submit" asp-controller="Administration" asp-action="DowngradeToUser" class="btn btn-primary">@Localizer["DowngradeLabel"]</button>
+				}
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
+					<tr>
+						@if (User.IsInRole("admin"))
+						{
+							<th scope="col" width="5"><input class="form-check-input" type="checkbox" value="" name="parrentId" id="flexCheckDefault" onClick="check_uncheck_checkbox(this.checked);"></th>
+						}
+						<th scope="col" width="5">#</th>
+						<th scope="col">@Localizer["NameLabel"]</th>
+						<th scope="col">Email</th>
+						<th scope="col">@Localizer["RegistrationLabel"]</th>
+						<th scope="col">@Localizer["RoleLabel"]</th>
+						<th scope="col">@Localizer["StatusLabel"]</th>
+						<th scope="col" width="5"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var user in Model)
+					{
+						<tr>
+							@if (User.IsInRole("admin"))
+							{
+								<td scope="row"><input class="form-check-input" type="checkbox" name="userId" value="@user.Id"></td>
+							}
+							<td scope="row">@(++i)</td>
+							<td>@user.Name</td>
+							<td>@user.Email</td>
+							<td>@user.RegistrationDate</td>
+							<td>@user.Role</td>
+							<td>@user.Status</td>
+							<td><a href="@Url.Action("UserPage", "Home", new { userId = user.Id })"><i class="fas fa-eye"></i></a></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</form>
+</div>
+
+<script src="~/js/usersViewCheck.js" asp-append-version="true"></script>
+

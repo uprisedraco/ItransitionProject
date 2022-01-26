@@ -1,0 +1,241 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization
+@model EditCollectionViewModel
+@inject IViewLocalizer Localizer
+@{
+	ViewData["Title"] = "Edit Collection";
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	string currentCulture = CultureInfo.CurrentCulture.Name;
+}
+<link href="~/lib/datatables/datatables.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/select2-4.0.13/dist/css/select2.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/select2-bootstrap-5-theme-master/dist/select2-bootstrap-5-theme.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/krajee-markdown-editor-master/css/markdown-editor.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/krajee-markdown-editor-master/plugins/highlight/highlight.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/bootstrap-fileinput-master/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+
+<div class="container">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h4 class="text-right">@Localizer["EditLabel"]</h4>
+	</div>
+	<div class="row mt-3">
+		<form method="post" asp-controller="Collection" asp-action="EditCollection" enctype="multipart/form-data">
+			<div class="col-md-12 mb-3">
+				<input asp-for="EditCollection.Id" type="hidden" class="form-control" placeholder="">
+				<div class="row">
+					<div class="col-md-6">
+						<label class="labels">@Localizer["NameLabel"]</label>
+						<input asp-for="EditCollection.Name" type="text" class="form-control" required placeholder="">
+					</div>
+					<div class="col-md-6">
+						<label class="labels">@Localizer["TypeLabel"]</label>
+						<select asp-for="EditCollection.CollectionType" class="form-control" asp-items="@Html.GetEnumSelectList<ItransitionProject.Models.CollectionType>()"></select>
+					</div>
+				</div>
+				<div class="col-md-12 mt-2">
+					<label class="labels">@Localizer["DescriptionLabel"]</label>
+					<textarea asp-for="EditCollection.Description" id="kv-01" rows="9" class="form-control markdown" data-language="@currentCulture" required title="Krajee Markdown Editor" data-use-twemoji="true"></textarea>
+				</div>
+				<div class="col-md-12 mt-2">
+					<div class="file-loading">
+						<input id="inputCollectionImage" name="inputCollectionImage" type="file" accept=".jpg, .jpeg, .png">
+					</div>
+				</div>
+			</div>
+
+			<div id="newRow">
+				@foreach (var property in Model.EditCollection.EditCollectionProperties)
+				{
+					<div class="row mt-2 align-items-end" id="inputRow">
+						<div class="col-md-6">
+							<input asp-for="EditCollection.EditCollectionProperties[i].Id" type="hidden" class="form-control" placeholder="">
+
+							<label class="labels">@Localizer["PropertyNameLabel"]</label>
+							<input asp-for="EditCollection.EditCollectionProperties[i].Name" type="text" class="form-control" placeholder="">
+						</div>
+						<div class="col-md-5">
+							<label class="labels">@Localizer["PropertyTypeLabel"]</label>
+							<select asp-for="EditCollection.EditCollectionProperties[i].Property" class="form-control" asp-items="@Html.GetEnumSelectList<ItransitionProject.Models.PropertyType>()"></select>
+						</div>
+						<div class="col-md-1">
+							<a href="@Url.Action("RemoveProperty", "Collection", new { propertyId = property.Id })" class="btn btn-danger">@Localizer["RemoveLabel"]</a>
+						</div>
+					</div>
+					i++;
+				}
+			</div>
+			<div class="d-grid gap-2 d-md-block">
+				<button type="submit" class="btn btn-primary mt-3" asp-controller="Collection" asp-action="EditCollection">@Localizer["SaveLabel"]</button>
+				<button id="addRow" type="button" class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">@Localizer["AddPropertyLabel"]</button>
+				<button id="addRow" type="button" class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal2">@Localizer["AddItemLabel"]</button>
+			</div>
+		</form>
+	</div>
+	<div class="mt-3">
+		<table id="datatable" class="table-responsive">
+			<thead>
+				<tr>
+					<th scope="col" width="5">#</th>
+					<th scope="col">@Localizer["TableNameLabel"]</th>
+					<th scope="col">@Localizer["TagsLabel"]</th>
+					@foreach (var col in Model.EditCollection.EditCollectionProperties)
+					{
+						<th scope="col">@col.Name</th>
+					}
+					<th scope="col" width="5"></th>
+					<th scope="col" width="5"></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.CollectionItems)
+				{
+					<tr>
+						<td scope="row">@(++k)</td>
+						<td>@item.Name</td>
+						<td>@String.Join(", ",item.Tags.Select(x=>x.UserTag.Tag))</td>
+						@foreach (var property in item.ItemProperties)
+						{
+							<td>@property.Value</td>
+						}
+						<td><a href="@Url.Action("EditCollectionItem", "Collection", new { itemId = item.Id })"><i class="fas fa-pen"></i></a></td>
+						<td><a href="@Url.Action("DeleteItem", "Collection", new { itemId = item.Id })"><i class="fas fa-trash"></i></a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<form method="post" asp-controller="Collection" asp-action="AddProperty">
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">@Localizer["AddPropertyLabel"]</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<input asp-for="CollectionProperty.CollectionId" type="hidden" class="form-control" placeholder="" value="@Model.EditCollection.Id">
+
+					<div class="mb-3">
+						<label for="recipient-name" class="col-form-label">@Localizer["PropertyNameLabel"]</label>
+						<input asp-for="CollectionProperty.Name" class="form-control" required id="recipient-name">
+					</div>
+					<div class="mb-3">
+						<label for="message-text" class="col-form-label">@Localizer["PropertyTypeLabel"]</label>
+						<select asp-for="CollectionProperty.Property" class="form-control" asp-items="@Html.GetEnumSelectList<ItransitionProject.Models.PropertyType>()"></select>
+
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CloseLabel"]</button>
+					<button type="submit" class="btn btn-primary">@Localizer["SaveLabel"]</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<form method="post" asp-controller="Collection" asp-action="AddItem">
+	<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">@Localizer["AddItemLabel"]</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<input asp-for="UserItem.CollectionId" type="hidden" class="form-control" placeholder="" value="@Model.EditCollection.Id">
+					<div class="mb-3">
+						<label for="recipient-name" class="col-form-label">@Localizer["ItemNameLabel"]</label>
+						<input asp-for=UserItem.Name class="form-control" required id="recipient-name">
+					</div>
+					<div class="mb-3">
+						<label for="recipient-name" class="col-form-label">@Localizer["TagsLabel"]</label>
+						<select id="tags" name="tags" class="form-control select2" required multiple="multiple" asp-items="@(new SelectList(@ViewBag.Tags, "Tag", "Tag"))">
+						</select>
+					</div>
+
+					@foreach (var property in Model.EditCollection.EditCollectionProperties)
+					{
+						if (property.Property == PropertyType.markdown)
+						{
+							<div class="mb-3">
+								<input asp-for="UserItem.ItemProperties[j].ColletctionPropertyId" type="hidden" class="form-control" placeholder="" value="@property.Id">
+								<label for="recipient-name" class="col-form-label">@property.Name</label>
+								<textarea asp-for="UserItem.ItemProperties[j].Value" id="kv-01" rows="10" class="form-control markdown" data-language="@currentCulture" required title="Krajee Markdown Editor" data-use-twemoji="true" style="height: 150px;"></textarea>
+							</div>
+						}
+						else if (property.Property == PropertyType.checkbox)
+						{
+							<div class="mb-3">
+								<input asp-for="UserItem.ItemProperties[j].ColletctionPropertyId" type="hidden" class="form-control" placeholder="" value="@property.Id">
+
+								<label for="recipient-name" class="form-check-label">@property.Name</label>
+								<input type="@property.Property" asp-for=UserItem.ItemProperties[j].Value class="form-check-input" id="recipient-name">
+							</div>
+						}
+						else
+						{
+							<div class="mb-3">
+								<input asp-for="UserItem.ItemProperties[j].ColletctionPropertyId" type="hidden" class="form-control" placeholder="" value="@property.Id">
+
+								<label for="recipient-name" class="col-form-label">@property.Name</label>
+								<input type="@property.Property" asp-for=UserItem.ItemProperties[j].Value required class="form-control" id="recipient-name">
+							</div>
+						}
+						j++;
+					}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CloseLabel"]</button>
+					<button type="submit" class="btn btn-primary">@Localizer["SaveLabel"]</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<script src="~/lib/datatables/datatables.js"></script>
+<script src="~/lib/select2-4.0.13/dist/js/select2.min.js"></script>
+<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/purify/purify.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-deflist.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-footnote.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-abbr.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-sub.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-sup.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-ins.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-mark.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-smartarrows.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-checkbox.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-cjk-breaks.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-emoji.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/highlight/highlight.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/markdown-editor.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/locales/en.js.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/locales/ru.js"></script>
+<script src="~/lib/bootstrap-fileinput-master/js/plugins/piexif.min.js"></script>
+<script src="~/lib/bootstrap-fileinput-master/js/plugins/sortable.min.js"></script>
+<script src="~/lib/bootstrap-fileinput-master/js/fileinput.min.js"></script>
+<script src="~/lib/bootstrap-fileinput-master/js/locales/LANG.js"></script>
+<script src="~/lib/bootstrap-fileinput-master/js/locales/ru.js"></script>
+<script src="~/lib/bootstrap-fileinput-master/themes/fas/theme.min.js"></script>
+<script src="~/js/select2Tags.js"></script>
+<script src="~/js/datatable.js"></script>
+<script>
+		$(document).ready(function () {
+		$("#inputCollectionImage").fileinput({
+			language: "@currentCulture",
+			theme: "fas",
+			browseClass: "btn btn-primary",
+			mainClass: "d-grid",
+			showCaption: false,
+			showRemove: false,
+			showUpload: false
+		});
+	});
+</script>

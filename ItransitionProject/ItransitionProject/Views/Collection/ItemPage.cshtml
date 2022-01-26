@@ -1,0 +1,125 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model ItemViewModel
+@inject IViewLocalizer Localizer
+@{
+	ViewData["Title"] = "Item";
+	int i = 0;
+}
+<link href="~/lib/krajee-markdown-editor-master/css/markdown-editor.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/krajee-markdown-editor-master/plugins/highlight/highlight.min.css" media="all" rel="stylesheet" type="text/css" />
+
+<div class="container">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h4 class="text-right">@Model.Name</h4>
+	</div>
+	<div>
+		@foreach (var tag in Model.Tags)
+		{
+			<span class="badge bg-primary">@tag.UserTag.Tag</span>
+		}
+	</div>
+	<div class="row mt-3">
+		@foreach (var property in Model.CollectionProperties)
+		{
+			if (property.Property == PropertyType.markdown)
+			{
+				<div class="col-md-12">
+					<label for="recipient-name" class="col-form-label">@property.Name</label>
+					<textarea asp-for="ItemProperties[i].Value" id="kv-01" rows="10" class="form-control" readonly title="Krajee Markdown Editor" data-use-twemoji="true"></textarea>
+				</div>
+			}
+			else if (property.Property == PropertyType.checkbox)
+			{
+				<div class="col-md-12">
+					<label class="form-check-label">@property.Name</label>
+					<input type="checkbox" class="form-check-input" placeholder="" onclick="return false;" value=@Model.ItemProperties[i].Value>
+				</div>
+			}
+			else
+			{
+				<div class="row">
+					<div class="col-md-2">
+						<label class="labels">@property.Name</label>
+					</div>
+					<div class="col-md-10">
+						<label class="labels">@Model.ItemProperties[i].Value</label>
+					</div>
+				</div>
+			}
+			i++;
+		}
+	</div>
+	@if (User.Identity.IsAuthenticated)
+	{
+		<div class="mt-2">
+			<a class="btn btn-primary" href="@Url.Action("LikeItem", "Collection", new { itemId = Model.Id })">
+				@Localizer["LikeLabel"] <span class="badge bg-secondary">@Model.Likes.Count</span>
+			</a>
+		</div>
+		<div class="row mt-3">
+			<form method="post" asp-controller="Collection" asp-action="AddComment">
+				<div class="col-md-12 mb-3">
+					<input asp-for="CommentView.ItemId" type="hidden" class="form-control" placeholder="" value="@Model.Id">
+
+					<textarea asp-for="CommentView.Comment" class="form-control" required rows="3"></textarea>
+				</div>
+				<div class="d-grid gap-2 d-md-block">
+					<button type="submit" class="btn btn-primary mb-3">@Localizer["ButtonLabel"]</button>
+				</div>
+			</form>
+		</div>
+	}
+	<table class="table mt-3">
+		<thead>
+			<tr>
+				<th scope="col" width="15">@Localizer["UserLabel"]</th>
+				<th scope="col">@Localizer["CommentLabel"]</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.Comments)
+			{
+				<tr>
+					@if (item.User == null)
+					{
+						<td scope="row">Bug</td>
+					}
+					else
+					{
+						<td scope="row">@item.User.Name</td>
+					}
+					<td>@item.UserComment</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+
+<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/purify/purify.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-deflist.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-footnote.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-abbr.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-sub.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-sup.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-ins.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-mark.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-smartarrows.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-checkbox.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-cjk-breaks.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-emoji.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/highlight/highlight.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/markdown-editor.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/locales/en.js"></script>
+<script src="~/js/mark.js"></script>
+<script>
+	var scheme = document.location.protocol === "https:" ? "wss" : "ws";
+	var port = document.location.port ? (":" + document.location.port) : "";
+	const connectionUrl = scheme + "://" + document.location.hostname + port + "/ws" + "?itemId=" + @Model.Id;
+	socket = new WebSocket(connectionUrl);
+
+	socket.onmessage = data => {
+		window.location.reload();
+	};
+</script>

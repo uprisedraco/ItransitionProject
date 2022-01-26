@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model ItransitionProject.Models.RegisterViewModel
+@inject IViewLocalizer Localizer
+@{
+	ViewData["Title"] = "Register";
+}
+
+<div class="container col-xl-10 col-xxl-8 px-4 py-5">
+	<div class="row align-items-center g-lg-5 py-5">
+		<div class="col-lg-7 text-center text-lg-start">
+			<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="img-fluid" alt="Phone image">
+			<h1>@Localizer["Header"]</h1>
+		</div>
+		<div class="col-md-10 mx-auto col-lg-5">
+			<form method="post" asp-controller="Account" asp-action="Register" class="p-4 p-md-5 border rounded-3 bg-light">
+				<div asp-validation-summary="ModelOnly"></div>
+
+				<div class="text-center">
+					<small class="text-muted"><a class="align-text-bottom" asp-controller="Home" asp-action="Index">@Localizer["Back"]</a></small>
+				</div>
+				<hr class="my-4">
+
+				<div class="form-floating mb-3">
+					<input asp-for="Name" class="form-control" id="floatingInput" placeholder="Name">
+					<span class="text-danger" asp-validation-for="Name"></span>
+					<label for="floatingInput">@Localizer["NameLabel"]</label>
+				</div>
+				<div class="form-floating mb-3">
+					<input asp-for="Email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+					<span class="text-danger" asp-validation-for="Email"></span>
+					<label for="floatingInput">Email</label>
+				</div>
+				<div class="form-floating mb-3">
+					<input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+					<span class="text-danger" asp-validation-for="Password"></span>
+					<label for="floatingPassword">@Localizer["PasswordLabel"]</label>
+				</div>
+				<div class="form-floating mb-3">
+					<input asp-for="PasswordConfirm" type="password" class="form-control" id="floatingInput" placeholder="Password">
+					<span class="text-danger" asp-validation-for="PasswordConfirm"></span>
+					<label for="floatingInput">@Localizer["PasswordConfirmLabel"]</label>
+				</div>
+				<div class="checkbox mb-3">
+					<label>
+						<input asp-for="Admin" type="checkbox"> @Localizer["AdminLabel"]
+					</label>
+				</div>
+				<button class="w-100 btn btn-lg btn-primary" type="submit">@Localizer["Button"]</button>
+				<hr class="my-4">
+				<small class="text-muted">@Localizer["Text"] <a asp-controller="Account" asp-action="Login">@Localizer["LoginLabel"]</a></small>
+			</form>
+		</div>
+	</div>
+</div>

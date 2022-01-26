@@ -1,0 +1,95 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model CollectionPageViewModel
+@inject IViewLocalizer Localizer
+@{
+	ViewData["Title"] = "CollectionPage";
+	int i = 0;
+	string markdownClass = "";
+	if (Model.FileModel != null)
+	{
+		markdownClass = "col-md-6";
+	}
+	else
+	{
+		markdownClass = "col-md-12";
+	}
+}
+<link href="~/lib/datatables/datatables.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/krajee-markdown-editor-master/css/markdown-editor.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/krajee-markdown-editor-master/plugins/highlight/highlight.min.css" media="all" rel="stylesheet" type="text/css" />
+
+<div class="container">
+	<div class="row">
+		<div class="d-flex justify-content-between align-items-center mb-3 col-md-10">
+			<h4 class="text-right">@Model.Name (@Model.CollectionType.ToString())</h4>
+		</div>
+	</div>
+	<div class="row">
+		@if (Model.FileModel != null)
+		{
+			<div class="col-md-6">
+				<div class="d-flex justify-content-center">
+					<img class="img-fluid" @*src="@Url.Content(@Model.FileModel.Path)"*@ src="data:image/jpeg;base64,@Convert.ToBase64String(Model.FileModel.Data)" style="height: 378px">
+				</div>
+			</div>
+		}
+		<div class="@markdownClass">
+			<fieldset disabled>
+				<textarea asp-for="@Model.Description" id="kv-01" rows="15" class="form-control" title="Krajee Markdown Editor" data-use-twemoji="true"></textarea>
+			</fieldset>
+		</div>
+	</div>
+
+	<div class="mt-2">
+		<table id="datatable" class="table-responsive">
+			<thead>
+				<tr>
+					<th scope="col" width="5">#</th>
+					<th scope="col">@Localizer["NameLabel"]</th>
+					<th scope="col">@Localizer["TagsLabel"]</th>
+					@foreach (var col in Model.CollectionViewProperties)
+					{
+						<th scope="col">@col.Name</th>
+					}
+					<th scope="col" width="10"></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.CollectionItems)
+				{
+					<tr>
+						<td scope="row">@(++i)</td>
+						<td>@item.Name</td>
+						<td>@String.Join(", ",item.Tags.Select(x=>x.UserTag.Tag))</td>
+						@foreach (var property in item.ItemProperties)
+						{
+							<td>@property.Value</td>
+						}
+						<td><a href="@Url.Action("ItemPage", "Collection", new { itemId = item.Id })"><i class="fas fa-eye"></i></a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script src="~/lib/datatables/datatables.js"></script>
+<script src="~/js/datatable.js"></script>
+<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/purify/purify.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-deflist.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-footnote.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-abbr.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-sub.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-sup.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-ins.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-mark.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-smartarrows.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-checkbox.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-cjk-breaks.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-emoji.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/highlight/highlight.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/markdown-editor.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/locales/en.js"></script>
+<script src="~/js/mark.js"></script>

@@ -1,0 +1,85 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model EditItemViewModel
+@inject IViewLocalizer Localizer
+@{
+	ViewData["Title"] = "Edit Item";
+	int i = 0;
+}
+<link href="~/lib/select2-4.0.13/dist/css/select2.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/select2-bootstrap-5-theme-master/dist/select2-bootstrap-5-theme.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/krajee-markdown-editor-master/css/markdown-editor.css" media="all" rel="stylesheet" type="text/css" />
+<link href="~/lib/krajee-markdown-editor-master/plugins/highlight/highlight.min.css" media="all" rel="stylesheet" type="text/css" />
+
+<div class="container">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h4 class="text-right">@Localizer["Title"]</h4>
+	</div>
+	<div class="row mt-3">
+		<form method="post" asp-controller="Collection" asp-action="EditItem">
+			<div class="col-md-12">
+				<input asp-for="EditItem.Id" type="hidden" class="form-control" placeholder="">
+
+				<label class="labels">@Localizer["NameLabel"]</label>
+				<input asp-for="EditItem.Name" type="text" class="form-control" required placeholder="">
+
+				<label class="labels">@Localizer["TagsLabel"]</label>
+				<select id="tags" name="tags" class="form-control select2" required multiple="multiple" asp-items="@Model.EditItem.Tags">
+				</select>
+
+				@foreach (var property in Model.CollectionProperties)
+				{
+					if (property.Property == PropertyType.markdown)
+					{
+						<div>
+							<input asp-for="EditItem.ItemProperties[i].UserItemId" type="hidden" class="form-control" placeholder="" value=@Model.EditItem.Id>
+							<input asp-for="EditItem.ItemProperties[i].ColletctionPropertyId" type="hidden" class="form-control" placeholder="" value=@property.Id>
+							<label for="recipient-name" class="col-form-label">@property.Name</label>
+							<textarea asp-for="EditItem.ItemProperties[i].Value" id="kv-01" rows="10" class="form-control markdown" required title="Krajee Markdown Editor" data-use-twemoji="true"></textarea>
+						</div>
+					}
+					else if (property.Property == PropertyType.checkbox)
+					{
+						<input asp-for="EditItem.ItemProperties[i].UserItemId" type="hidden" class="form-control" placeholder="" value=@Model.EditItem.Id>
+						<input asp-for="EditItem.ItemProperties[i].ColletctionPropertyId" type="hidden" class="form-control" placeholder="" value=@property.Id>
+
+						<label for="recipient-name" class="form-check-label">@property.Name</label>
+						<input asp-for="EditItem.ItemProperties[i].Value" type="@property.Property" class="form-check-input" id="recipient-name">
+					}
+					else
+					{
+						<input asp-for="EditItem.ItemProperties[i].UserItemId" type="hidden" class="form-control" placeholder="" value=@Model.EditItem.Id>
+						<input asp-for="EditItem.ItemProperties[i].ColletctionPropertyId" type="hidden" class="form-control" placeholder="" value=@property.Id>
+
+						<label class="labels">@property.Name</label>
+						<input asp-for="EditItem.ItemProperties[i].Value" type="@property.Property" required class="form-control" placeholder="">
+					}
+					i++;
+				}
+			</div>
+			<div class="d-grid gap-2 d-md-block">
+				<button type="submit" class="btn btn-primary mt-3" asp-controller="Collection" asp-action="EditItem">@Localizer["ButtonLabel"]</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script src="~/lib/select2-4.0.13/dist/js/select2.min.js"></script>
+<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/purify/purify.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-deflist.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-footnote.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-abbr.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-sub.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-sup.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-ins.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-mark.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-smartarrows.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-checkbox.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-cjk-breaks.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/markdown-it/markdown-it-emoji.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/plugins/highlight/highlight.min.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/markdown-editor.js"></script>
+<script src="~/lib/krajee-markdown-editor-master/js/locales/en.js"></script>
+
+<script src="~/lib/select2-4.0.13/dist/js/select2.min.js"></script>
+<script src="~/js/select2Tags.js"></script>

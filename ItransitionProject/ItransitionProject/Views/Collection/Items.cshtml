@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model IEnumerable<ItransitionProject.Models.ItemTag>
+@inject IViewLocalizer Localizer
+@{
+	ViewData["Title"] = "Items";
+}
+
+<div class="container">
+	<div class="row">
+		@foreach (var item in Model)
+		{
+			<div class="col-sm-2">
+				<div class="card h-100">
+					<div class="card-body">
+						<h5 class="card-title">@item.UserItem.Name</h5>
+						<a href="@Url.Action("ItemPage", "Collection", new { itemId = item.ItemId })" class="btn btn-primary">@Localizer["ViewLabel"]</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

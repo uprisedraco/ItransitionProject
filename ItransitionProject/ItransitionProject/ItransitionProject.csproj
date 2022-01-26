@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Files\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\lib\bootstrap-fileinput-master\.github\CODE_OF_CONDUCT.md" />
+    <None Include="wwwroot\lib\bootstrap-fileinput-master\.github\config.yml" />
+    <None Include="wwwroot\lib\bootstrap-fileinput-master\.github\CONTRIBUTING.md" />
+    <None Include="wwwroot\lib\bootstrap-fileinput-master\.github\FUNDING.yml" />
+    <None Include="wwwroot\lib\bootstrap-fileinput-master\.github\ISSUE_TEMPLATE.md" />
+    <None Include="wwwroot\lib\bootstrap-fileinput-master\.github\PULL_REQUEST_TEMPLATE.md" />
+    <None Include="wwwroot\lib\bootstrap-fileinput-master\.github\stale.yml" />
+    <None Include="wwwroot\lib\select2-4.0.13\.github\CONTRIBUTING.md" />
+    <None Include="wwwroot\lib\select2-4.0.13\.github\FUNDING.yml" />
+    <None Include="wwwroot\lib\select2-4.0.13\.github\ISSUE_TEMPLATE.md" />
+    <None Include="wwwroot\lib\select2-4.0.13\.github\PULL_REQUEST_TEMPLATE.md" />
+    <None Include="wwwroot\lib\select2-4.0.13\.github\stale.yml" />
+    <None Include="wwwroot\lib\select2-4.0.13\.github\workflows\docs-deploy.yml" />
+    <None Include="wwwroot\lib\select2-4.0.13\.github\workflows\main.yml" />
+    <None Include="wwwroot\lib\select2-4.0.13\.github\workflows\package-deploy.yml" />
+    <None Include="wwwroot\lib\select2-bootstrap-5-theme-master\.github\workflows\compile.yml" />
+  </ItemGroup>
+
+</Project>
